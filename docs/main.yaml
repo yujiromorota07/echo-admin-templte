@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+  description: テンプレート
+  version: 1.0.0
+  title: mainAPI
+servers:
+  - url: "http://localhost:8081"
+
+tags:
+  - name: login
+    description: ""
+  - name: logout
+    description: ""
+  - name: account
+    description: ""
+  
+
+paths:
+  /login:
+    post:
+      tags:
+      - login
+      description: ""
+      requestBody:
+        description: "" 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+              examples:
+              example-1:
+                value:
+                  email: test@signplace.me
+                  password: testtest
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginToken"
+              examples: {}
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /refresh_token:
+    post:
+      tags:
+        - token
+      summary: トークンをリフレッシュする
+      description: 有効期限は7日間
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginToken"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+      security:
+        - Bearer: []
+
+  /logout:
+    get:
+      tags:
+        - logout
+      summary: ログアウトする
+      description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: ログアウトに失敗
+      security:
+        - Bearer: []
+
+  /account/create:
+    post:
+      tags:
+        - account
+      summary: アカウントを作成
+      description: ""
+      requestBody:
+        description: ""
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/AccountCreate"
+
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          description: ""
+      security:
+        - Bearer: []
+                
+components:
+  responses:
+    BadRequestError:
+      description: Bad request
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    ForbiddenError:
+      description: Access authority is invalid
+    NotFoundError:
+      description: Not found data
+
+  schemas:
+    Login:
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+    LoginToken:
+      properties:
+        token:
+          type: string
+        is_terms:
+          type: boolean
+      required:
+        - token
+        - is_terms
+
+    Account:
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role_id:
+          type: integer
+          format: int32
+        password:
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - role_id
+
+    AccountCreate:
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - name
+        - email
+        - password
+    
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - type
+        - message
+
+      
+
+
+
+
