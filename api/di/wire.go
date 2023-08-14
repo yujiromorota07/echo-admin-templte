@@ -11,6 +11,7 @@ import (
 	accountRoleDatasource "echo-admin-templte/gateways/datasource/dsmysqlimpl"
 	accountRepository "echo-admin-templte/gateways/repository/account"
 	dsmysql "echo-admin-templte/gateways/repository/dsmysql"
+	transactionManager "echo-admin-templte/gateways/repository/transaction"
 	"echo-admin-templte/generated/account"
 	"echo-admin-templte/generated/login"
 	inputport "echo-admin-templte/usecase/inputport"
@@ -51,6 +52,7 @@ func IntializeAccountUsecase() inputport.Account {
 	wire.Build(
 		accountUsecase.NewAccountUsecase,
 		IntializeAccountRepository,
+		IntializeTransactionManager,
 	)
 	return accountUsecase.AccountUsecase{}
 }
@@ -63,6 +65,14 @@ func IntializeAccountRepository() repository.AccountRepository {
 	)
 
 	return accountRepository.AccountRepository{}
+}
+
+func IntializeTransactionManager() repository.TransactionManager {
+	wire.Build(
+		transactionManager.NewTransactionManageer,
+	)
+
+	return transactionManager.TransactionManager{}
 }
 
 func IntializeAccountDatasource() dsmysql.AccountDatasource {
